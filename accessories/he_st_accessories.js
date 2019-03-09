@@ -144,37 +144,25 @@ function HE_ST_Accessory(platform, device) {
                 }
             }
         }
-        if (platformName === 'Hubitat' && isWindowShade) {
+        if (isWindowShade && (device.commands.setPosition || device.commands.setLevel)) {
             that.deviceGroup = 'window_shades';
             thisCharacteristic = that.getaddService(Service.WindowCovering).getCharacteristic(Characteristic.TargetPosition)
                 .on('get', function(callback) {
-                    let curPos = parseInt(that.device.attributes.position);
-                    if (curPos > 98) {
-                        curPos = 100;
-                    } else if (curPos < 2) {
-                        curPos = 0;
-                    }
-                    callback(null, curPos);
+                    let curPos = parseInt((device.commands.setPosition ? that.device.attributes.position : that.device.attributes.level));
+                    callback(null, (curPos >= 98 ? 100 : (curPos <= 2 ? 0 : curPos)));
                 })
                 .on('set', function(value, callback) {
-                    platform.log('setPosition(HE): ' + value);
-                    platform.api.runCommand(callback, device.deviceid, 'setPosition', {
-                        value1: value
+                    platform.api.runCommand(callback, device.deviceid, (device.commands.setPosition ? 'setPosition' : 'setLevel'), {
+                        value1: (device.commands.setPosition ? value : value.toString())
                     });
                 });
-            platform.addAttributeUsage('position', device.deviceid, thisCharacteristic);
+            platform.addAttributeUsage((device.commands.setPosition ? 'position' : 'level'), device.deviceid, thisCharacteristic);
             thisCharacteristic = that.getaddService(Service.WindowCovering).getCharacteristic(Characteristic.CurrentPosition)
                 .on('get', function(callback) {
-                    let curPos = parseInt(that.device.attributes.position);
-                    if (curPos > 98) {
-                        curPos = 100;
-                    } else if (curPos < 2) {
-                        curPos = 0;
-                    }
-                    callback(null, curPos);
+                    let curPos = parseInt((device.commands.setPosition ? that.device.attributes.position : that.device.attributes.level));
+                    callback(null, (curPos >= 98 ? 100 : (curPos <= 2 ? 0 : curPos)));
                 });
-            platform.addAttributeUsage('position', device.deviceid, thisCharacteristic);
-
+            platform.addAttributeUsage((device.commands.setPosition ? 'position' : 'level'), device.deviceid, thisCharacteristic);
             thisCharacteristic = that.getaddService(Service.WindowCovering).setCharacteristic(Characteristic.PositionState, Characteristic.PositionState.STOPPED);
         }
         if (device.capabilities['Garage Door Control'] !== undefined || device.capabilities['GarageDoorControl'] !== undefined) {
