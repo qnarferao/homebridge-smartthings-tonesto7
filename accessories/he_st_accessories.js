@@ -153,7 +153,7 @@ function HE_ST_Accessory(platform, device) {
                 })
                 .on('set', function(value, callback) {
                     platform.api.runCommand(callback, device.deviceid, (device.commands.setPosition ? 'setPosition' : 'setLevel'), {
-                        value1: (device.commands.setPosition ? value : value.toString())
+                        value1: value.toString()
                     });
                 });
             platform.addAttributeUsage((device.commands.setPosition ? 'position' : 'level'), device.deviceid, thisCharacteristic);
