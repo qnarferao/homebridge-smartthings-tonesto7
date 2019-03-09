@@ -149,7 +149,7 @@ function HE_ST_Accessory(platform, device) {
             thisCharacteristic = that.getaddService(Service.WindowCovering).getCharacteristic(Characteristic.TargetPosition)
                 .on('get', function(callback) {
                     let curPos = parseInt((device.commands.setPosition ? that.device.attributes.position : that.device.attributes.level));
-                    callback(null, (curPos >= 98 ? 100 : (curPos <= 2 ? 0 : curPos)));
+                    callback(null, (curPos >= 95 ? 100 : (curPos <= 5 ? 0 : curPos)));
                 })
                 .on('set', function(value, callback) {
                     platform.api.runCommand(callback, device.deviceid, (device.commands.setPosition ? 'setPosition' : 'setLevel'), {
@@ -160,7 +160,7 @@ function HE_ST_Accessory(platform, device) {
             thisCharacteristic = that.getaddService(Service.WindowCovering).getCharacteristic(Characteristic.CurrentPosition)
                 .on('get', function(callback) {
                     let curPos = parseInt((device.commands.setPosition ? that.device.attributes.position : that.device.attributes.level));
-                    callback(null, (curPos >= 98 ? 100 : (curPos <= 2 ? 0 : curPos)));
+                    callback(null, (curPos >= 95 ? 100 : (curPos <= 5 ? 0 : curPos)));
                 });
             platform.addAttributeUsage((device.commands.setPosition ? 'position' : 'level'), device.deviceid, thisCharacteristic);
             thisCharacteristic = that.getaddService(Service.WindowCovering).setCharacteristic(Characteristic.PositionState, Characteristic.PositionState.STOPPED);
